@@ -38,7 +38,7 @@ add_column :users, :tags, :hstore, array: true, default: []
 
 ### Setup Model
 
-```
+```ruby
 class User < ActiveRecord::Base
   # many embedded tags
   embeds_many :tags
@@ -85,7 +85,19 @@ end
 
 ## Development
 
+All pull requests are welcome.
 
+### Setup development environment
+
+1. Run `bundle install`
+2. Run `rake db:create` to create database
+3. Run `rake spec` to run specs
+
+### Development Guide
+
+- Follow established and good convention
+- Write code and specs
+- Send pull request
 
 ## License
 
