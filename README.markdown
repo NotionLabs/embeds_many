@@ -63,6 +63,8 @@ class User < ActiveRecord::Base
 end
 ```
 
+**Note**: There's no need to define a class for the embedded records, it's taken over automatically by `embeds_many`.
+
 ### Work with embedded records
 
 ```ruby
