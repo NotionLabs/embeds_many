@@ -46,13 +46,24 @@ add_column :users, :tags, :hstore, array: true, default: []
 
 ### Setup Model
 
+A simple usage is as follows:
+
 ```ruby
 class User < ActiveRecord::Base
   # many embedded tags
+  # the block is optional
   embeds_many :tags
+end
+```
 
-  # validation tags
-  embedded :tags do
+If you need validations on embedded records, you can provide an optional block:
+
+```ruby
+class User < ActiveRecord::Base
+  # many embedded tags
+  # the block is optional
+  embeds_many :tags do
+    # add accessors
     embedded_fields :name, :color
 
     validates :name, uniqueness: true, presence: true

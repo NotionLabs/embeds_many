@@ -10,10 +10,9 @@ end
 
 class User < ActiveRecord::Base
   # many embedded tags
-  embeds_many :tags
-
-  # validation tags
-  embedded :tags do
+  # the block is optional
+  embeds_many :tags do
+    # add accessors
     embedded_fields :name, :color
 
     validates :name, uniqueness: true, presence: true

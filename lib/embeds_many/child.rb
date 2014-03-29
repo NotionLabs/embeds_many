@@ -30,10 +30,10 @@ module EmbedsMany
 
     # validation requires model name
     def self.model_name
-      ActiveModel::Name.new(self, nil, @field_name.to_s.classify)
+      ActiveModel::Name.new(self, nil, self.name || @field_name.to_s.classify)
     end
 
-    def initialize(attrs)
+    def initialize(attrs={})
       @attributes = ActiveSupport::HashWithIndifferentAccess.new
 
       attrs.each do |name, value|

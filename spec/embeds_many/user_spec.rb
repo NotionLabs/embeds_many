@@ -18,10 +18,21 @@ describe User do
         user.reload.tags.any? {|t| t.name == 'bug'}.should be_true
       end
 
+      it "should to initialize an tag with no parameters" do
+        user.tags.new.should_not be_nil
+      end
+
       it "should be unable to create tags with duplicate name" do
         user.tags.new(name: 'bug', color: 'red').save.should be_true
 
         tag = user.tags.new(name: 'bug', color: 'green')
+
+        tag.save.should be_false
+        tag.errors[:name].should_not be_empty
+      end
+
+      it "should be unable to create tags without name" do
+        tag = user.tags.new(color: 'red')
 
         tag.save.should be_false
         tag.errors[:name].should_not be_empty
@@ -34,6 +45,7 @@ describe User do
         tag.errors[:color].should_not be_empty
       end
     end
+
 
     it "should be able to update record" do
       tag = user.tags.create(name: 'bug', color: 'red')

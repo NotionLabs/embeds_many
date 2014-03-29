@@ -1,10 +1,10 @@
 module EmbedsMany
   class ChildrenCollection
-    def new(attrs)
+    def new(attrs={})
       @child_klass.new(attrs.merge(parent: @obj))
     end
 
-    def create(attrs)
+    def create(attrs={})
       record = @child_klass.new(attrs.merge(parent: @obj))
 
       record.save
