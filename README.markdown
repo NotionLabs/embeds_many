@@ -1,6 +1,8 @@
 EmbedsMany
 ==============
 
+[![Build Status](https://travis-ci.org/NotionLabs/embeds_many.svg)](https://travis-ci.org/NotionLabs/embeds_many)
+
 EmbedsMany allows programmers to work with embedded records the same way as activerecord objects, with the power of PostgreSQL's hstore and array.
 
 **NOTE**: EmbedsMany only works with Rails/ActiveRecord `4.0.4` or above. To use EmbedsMany, you must use PostgreSQL.
