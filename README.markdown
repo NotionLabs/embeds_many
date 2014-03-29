@@ -50,8 +50,7 @@ A simple usage is as follows:
 
 ```ruby
 class User < ActiveRecord::Base
-  # many embedded tags
-  # the block is optional
+  # embedded tags
   embeds_many :tags
 end
 ```
@@ -60,8 +59,7 @@ If you need validations on embedded records, you can provide an optional block:
 
 ```ruby
 class User < ActiveRecord::Base
-  # many embedded tags
-  # the block is optional
+  # embedded tags
   embeds_many :tags do
     # add accessors
     embedded_fields :name, :color
