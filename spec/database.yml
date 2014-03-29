@@ -1,0 +1,4 @@
+test:
+  adapter: postgresql
+  database: embeds_many_test
+  username: postgres
