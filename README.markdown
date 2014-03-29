@@ -7,6 +7,12 @@ EmbedsMany allows programmers to work with embedded records the same way as acti
 
 **NOTE**: EmbedsMany only works with Rails/ActiveRecord `4.0.4` or above. To use EmbedsMany, you must use PostgreSQL.
 
+## Limitations and assumptions
+
+- Embedded keys and values can only be simply text strings due to the restriction of [hstore](http://www.postgresql.org/docs/9.2/static/hstore.html).
+- Embedded records should be of limited number, or they may cause performance problems.
+- The `id` of embedded records may duplicate when race condition happens.
+
 ## Usage
 
 ### Installation
@@ -86,12 +92,6 @@ end
 
 @tag.destroy
 ```
-
-### Limitations and assumptions
-
-- Embedded keys and values can only be simply text strings due to the restriction of [hstore](http://www.postgresql.org/docs/9.2/static/hstore.html).
-- Embedded records should be of limited number, or they may cause performance problems.
-- The `id` of embedded records may duplicate when race condition happens.
 
 ## Development
 
