@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ["liufengyun"]
   s.email       = ["liufengyunchina@gmail.com"]
   s.homepage    = "https://github.com/notionlabs/embeds_many"
-  s.summary     = %q{Embed many records based on the power of PostgreSQL's hstore and array}
+  s.summary     = %q{Embedded records based on the power of PostgreSQL's hstore and array}
   s.description = %q{EmbedsMany allows programmers to work with embedded records the same way as activerecord objects}
 
   s.files         = `git ls-files`.split("\n")
