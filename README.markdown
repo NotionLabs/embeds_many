@@ -87,6 +87,12 @@ end
 @tag.destroy
 ```
 
+### Limitations and assumptions
+
+- Embedded keys and values can only be simply text strings due to the restriction of [hstore](http://www.postgresql.org/docs/9.2/static/hstore.html).
+- Embedded records should be of limited number, or they may cause performance problems.
+- The `id` of embedded records may duplicate when race condition happens.
+
 ## Development
 
 All pull requests are welcome.
