@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
 end
 ```
 
-### Work with embedded tags
+### Work with embedded records
 
 ```ruby
 # create new tag
