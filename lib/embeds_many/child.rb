@@ -22,7 +22,7 @@ module EmbedsMany
 
     class UniquenessValidator < ActiveModel::EachValidator
       def validate_each(record, attribute, value)
-        if record.exists_in_parent? {|item| item.key?(attribute.to_s) && item[attribute.to_s] == value && record.id.to_s != item['id'] }
+        if record.exists_in_parent? {|item| item.key?(attribute.to_s) && item[attribute.to_s] == value && record.id.to_s != item['id'].to_s }
           record.errors.add attribute, "#{value} is already taken"
         end
       end
@@ -48,11 +48,15 @@ module EmbedsMany
     def save
       return false unless self.valid?
 
+      @operation_pending = true
+
       if new_record?
         save_new_record!
       else
         save_existing_record!
       end
+    ensure
+      @operation_pending = false
     end
 
     def destroy
@@ -61,12 +65,18 @@ module EmbedsMany
 
       parent.read_attribute(field_name).delete_if {|t| t['id'] == self.id}
 
-      if parent.save
+      @operation_pending = true
+
+      if parent.update(field_name => parent.read_attribute(field_name))
+        parent.send(field_name).child_destroyed(self)
+
         true
       else
         parent.send "#{field_name}=", parent.send("#{field_name}_was")
         false
       end
+    ensure
+      @operation_pending = false
     end
 
     def update(attrs)
@@ -83,17 +93,39 @@ module EmbedsMany
       parent.read_attribute(field_name).any? &block
     end
 
+    def before_parent_save
+      return if @operation_pending or !self.valid?
+
+      if new_record?
+        fill_parent_field_new_record!
+      else
+        fill_parent_field_existing_record!
+      end
+    end
+
     private
 
-    def save_new_record!
+    def fill_parent_field_new_record!
       @attributes[:id] = generate_id!
 
       # tell rails the field will change
       parent.send "#{field_name}_will_change!"
 
       parent.read_attribute(field_name) << @attributes.to_hash
+    end
 
-      if parent.save
+    def fill_parent_field_existing_record!
+      # tell rails the field will change
+      parent.send "#{field_name}_will_change!"
+
+      record = parent.read_attribute(field_name).detect {|t| t['id'].to_i == self.id.to_i }
+      record.merge!(@attributes)
+    end
+
+    def save_new_record!
+      fill_parent_field_new_record!
+
+      if parent.update(field_name => parent.read_attribute(field_name))
         true
       else
         @attributes.id = nil
@@ -104,13 +136,9 @@ module EmbedsMany
     end
 
     def save_existing_record!
-      # tell rails the field will change
-      parent.send "#{field_name}_will_change!"
+      fill_parent_field_existing_record!
 
-      record = parent.read_attribute(field_name).detect {|t| t['id'].to_i == self.id.to_i }
-      record.merge!(@attributes)
-
-      if parent.save
+      if parent.update(field_name => parent.read_attribute(field_name))
         true
       else
         # restore old value

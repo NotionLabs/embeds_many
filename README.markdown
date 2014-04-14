@@ -102,6 +102,22 @@ end
 @tag.destroy
 ```
 
+Embedded record are automatically saved on parent save. But invalid embedded records are not auto saved.
+
+``` ruby
+# auto save on parent save
+user = User.new(name: 'test')
+user.tags.new(tag_params)
+
+user.save
+
+# auto save on parent update
+@tag = user.tags.find(params['id'])
+@tag.color = 'red'
+
+user.update(name: 'bob')
+```
+
 ## Development
 
 All pull requests are welcome.

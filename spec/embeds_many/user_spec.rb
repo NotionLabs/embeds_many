@@ -44,25 +44,92 @@ describe User do
         tag.save.should be_false
         tag.errors[:color].should_not be_empty
       end
+
+      it "should auto save new tags on parent update" do
+        tag = user.tags.new(name: 'bug', color: 'red')
+
+        user.update(name: 'liufengyun')
+
+        user.reload.tags.any? {|t| t.name == 'bug'}.should be_true
+      end
+
+      it "should not auto save invalid new tags on parent update" do
+        tag = user.tags.new(name: 'bug')
+
+        user.save
+
+        user.reload.tags.any? {|t| t.name == 'bug'}.should be_false
+      end
+
+      it "should auto save new tags on parent create" do
+        new_user = User.new(name: 'user')
+        tag = new_user.tags.new(name: 'bug', color: 'red')
+
+        new_user.save
+
+        new_user.reload.tags.any? {|t| t.name == 'bug'}.should be_true
+      end
+
+      it "should not auto save invalid new tags on parent create" do
+        new_user = User.new(name: 'user')
+        tag = new_user.tags.new(name: 'bug')
+
+        new_user.save
+
+        new_user.reload.tags.any? {|t| t.name == 'bug'}.should be_false
+      end
     end
 
+    describe "update" do
+      it "should be able to update record" do
+        tag = user.tags.create(name: 'bug', color: 'red')
 
-    it "should be able to update record" do
-      tag = user.tags.create(name: 'bug', color: 'red')
+        user.reload.tags.any? {|t| t.name == 'bug'}.should be_true
 
-      user.reload.tags.any? {|t| t.name == 'bug'}.should be_true
+        tag.update(color: 'yellow').should be_true
 
-      tag.update(color: 'yellow').should be_true
+        user.reload.tags.any? {|t| t.color == 'yellow'}.should be_true
+      end
 
-      user.reload.tags.any? {|t| t.color == 'yellow'}.should be_true
+      it "should auto save tag on parent update" do
+        tag = user.tags.create(name: 'bug', color: 'red')
+        tag.color = 'yellow'
+
+        user.update(name: 'liufengyun')
+
+        user.reload.tags.any? {|t| t.color == 'yellow'}.should be_true
+      end
+
+      it "should not auto save invalid tag on parent save" do
+        tag = user.tags.create(name: 'bug', color: 'red')
+
+        tag.color = 'yellow'
+        tag.name = ''
+
+        user.update(name: 'liufengyun')
+
+        user.reload.tags.any? {|t| t.color == 'yellow'}.should be_false
+      end
     end
 
-    it "should be able to destroy" do
-      tag = user.tags.create(name: 'bug', color: 'red')
+    describe "destroy" do
+      it "should be able to destroy" do
+        tag = user.tags.create(name: 'bug', color: 'red')
 
-      tag.destroy.should be_true
+        tag.destroy.should be_true
 
-      user.reload.tags.any? {|t| t.name == 'bug'}.should be_false
+        user.reload.tags.any? {|t| t.name == 'bug'}.should be_false
+      end
+
+      it "should not be saved on parent save after destroy" do
+        tag = user.tags.create(name: 'bug', color: 'red')
+        tag.destroy
+
+        user.update(name: 'liufengyun')
+
+        user.reload.tags.any? {|t| t.color == 'yellow'}.should be_false
+      end
     end
+
   end
 end

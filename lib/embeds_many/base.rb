@@ -10,6 +10,8 @@ module EmbedsMany
           instance_variable_set("@#{field}_collection", ChildrenCollection.new(self, field, child_klass))
       end
 
+      before_save { |parent| parent.send(field).before_parent_save }
+
       child_klass.class_eval(&block) if block
     end
   end
